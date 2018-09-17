@@ -1,0 +1,133 @@
+---
+title: "A grammar of graphics"
+author: "Michael Nelson"
+date: "September 2018"
+output: 
+  beamer_presentation:
+    df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  dev = 'pdf',
+  fig.width = 4,
+  fig.height = 2,
+  dev.args = list(pointsize = 10),
+  tidy = TRUE,
+  tidy.opts = list(width = 40)
+)
+```
+
+## A grammar of graphics
+
+How do you describe a statistical graphic?
+
+Move beyond 'named' graphics such as 'scatterplot'
+
+A grammar?
+
+- Defining basic components that make up a plot.
+- More than a taxonomy
+
+Based on Wilkinson (2006). Implemented in `ggplotw` by Wickham (2016)
+
+
+## The components of a (statistical) graphic
+
+- *data*: The information we want to plot (a `data.frame`)
+- *geoms*: describe the type of geometric object that represent data (points, lines, bars, polygons, ...)
+- *aesthetics*: the visual characteristics that represent data (position, size, shape, colour, ...)
+- *coordinate system*: describes the 2-dimensional space the data is projected onto. (cartesian coordinates, polar coordinates, map projections, ...)
+- *scales*: for each aesthetic: describes how the visual characteristic is converted to display values
+- *stats*: describe the statistical transformations that summarize the data (counts, means, medians, regression lines, ...)
+- *position*: How to adjust the position if overplotting occurs.
+- *facets*: describe how the data is split into subsets and displayed as multiple smaller graphs
+
+## A simple example
+
+### The iris dataset
+
+```{r example, echo = TRUE}
+head(iris)
+```
+
+
+## A simple example
+
+```{r simple-plot}
+library(ggplot2)
+ggplot(data = iris, mapping = aes(x = Sepal.Length, y = Sepal.Width)) +
+  geom_point()
+```
+
+## Basic structure
+
+
+ `ggplot` is the function a ggplot `object`
+ 
+- Specify data and variables (`mapping`) in this function
+- Anything specified here will be *inherited* by all layers
+
+```{r building-blocks, eval = FALSE}
+ggplot(data = iris, mapping = aes( x= Sepal.Length, y = Sepal.Width))
+```
+
+- What happens if we don't specify a layer?
+
+## No layer
+
+```{r ref.label='building-blocks'}
+```
+
+
+## A layer
+
+```{r bb3, eval = TRUE}
+ggplot(data = iris, mapping = aes( x= Sepal.Length, y = Sepal.Width)) +
+ geom_point()
+```
+
+## What is a layer?
+
+### The purpose
+
+- To display the data - allows the viewer to see patterns, overall or local structure
+- To display statistical summaries of the data
+
+
+## Setting other aesthetics
+
+### Increase the size of the points?
+
+```{r point-size, eval = TRUE}
+ggplot(data = iris, mapping = aes( x= Sepal.Length, y = Sepal.Width)) +
+ geom_point(size = 3)
+```
+
+##  Mapping other aesthetics
+
+### Differentiate the points by colour
+
+```{r colour, eval = TRUE}
+ggplot(data = iris, mapping = aes( x= Sepal.Length, y = Sepal.Width, colour = Species)) +
+ geom_point()
+```
+
+
+##  Mapping other aesthetics
+
+### Differentiate the points by shape
+
+```{r colour-shape, eval = TRUE}
+ggplot(data = iris, mapping = aes( x= Sepal.Length, y = Sepal.Width, colour = Species)) +
+ geom_point(aes(shape = Species), size = 3)
+```
+
+
+## Mapping or setting aesthetics
+
+Aesthetics can be *set* or *mapped* within a ggplot call (or individual layer).
+
+- An aesthetic defined within `mapping = aes(...)` is mapped from the data, and a `guide` created.
+- An aesthetic may also be set to a single value, by defining it outside the `mapping = aes(...)` argument
